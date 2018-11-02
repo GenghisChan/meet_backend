@@ -27,22 +27,36 @@ class User < ApplicationRecord
     following.include?(other_user)
   end
 
-  def matches
+  def paired ## shows all matches ...
     found_users = []
 
-    if Relationship.where("follower_id=?", self).present?
-      Relationship.where("follower_id=?", self).pluck(:followed_id).map { |user|
+    if Relationship.where(follower_id: self.id).present?
+      Relationship.where(follower_id: self.id).pluck(:followed_id).map { |user|
         found_users.push(User.find(user))
       }
     end
 
-      if Relationship.where("followed_id=?", self).present?
-        Relationship.where("followed_id=?", self).pluck(:follower_id).map { |user|
+      if Relationship.where(followed_id: self.id).present?
+        Relationship.where(followed_id: self.id).pluck(:follower_id).map { |user|
         found_users.push(User.find(user))
       }
       end
 
       found_users
+  end
+
+  def find_matches ##creates matches
+    matches = User.all.select { |user| ##finds all people that like dogs
+        user != self && user.dogs == self.dogs ## and is not self
+    } # array of ppl
+    # for each user that like or dont like dogs .. create a
+    #new relationship if it doesnt exist yet ..
+    matches.each{ |user| Relationship.create(follower_id: self.id, followed_id: user.id) } # is this being called for a each iteration of a user ???
+        # should create instances of relationships... if it doesnt already exist in either direction
+        #for each user check if the relationship exists
+        # in either column
+
+        #find out why relationships are not being created
   end
 
 

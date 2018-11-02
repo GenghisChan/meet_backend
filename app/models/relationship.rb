@@ -14,31 +14,37 @@ class Relationship < ApplicationRecord
   #are relationships created immediately based on peoples answers ..? because they will eventually show on each others searches?
 # || self.where("followed_id=?",current_user)
 
-def self.findUser(user1, user2) #current_user adding user
-  current_user = User.find(user1.id)
-  if self.where("follower_id=?" || "following_id=?", current_user).present?
+def self.findUser(current_user, other_user) #current_user adding user if new user <<<<
 
-    follower = self.where("follower_id=?", current_user).pluck(:followed_id).map { |user|
-      if user == user2
+  if self.where(followed_id: current_user.id).present? || self.where(follower_id: current_user.id).present?
+
+    follower = self.where(follower_id: current_user.id).pluck(:followed_id).map { |followed|
+      if followed == other_user # goes through each id of followed column and compares it with the passed in user
         true
       end
       }
 
-        followed = self.where("followed_id=?", current_user).pluck(:follower_id).map { |user|
-          if user == user2
+        followed = self.where(followed_id: current_user.id).pluck(:follower_id).map { |follower|
+          if follower == other_user
             true
           end
         }
-
-      if follower == true && followed == true
+      if follower || followed
         puts "Relationship Exists"
-      else
-        Relationship.create(follower_id: user1.id, followed_id: user2.id)
+      else ## this is for existing followers that have already matched with users
+        # but if someone else signs up it adds those new users to list
+        Relationship.create(follower_id: current_user.id, followed_id: other_user.id) # << not happening
       end
+    else
+      ## create relationships .... with all users where both like or dont like dogs
+      matches = User.all.select { |user|
+          user != current_user && user.dogs == current_user.dogs
+      }
 
-  end
+      matches.each{ |user| Relationship.create(follower_id: current_user.id, followed_id: user.id) }
+
+   end
 end
-
 
 # on user click for matches ... run self.findUser(current_user)
 
