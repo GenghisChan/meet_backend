@@ -27,6 +27,24 @@ class User < ApplicationRecord
     following.include?(other_user)
   end
 
+  def matches
+    found_users = []
+
+    if Relationship.where("follower_id=?", self).present?
+      Relationship.where("follower_id=?", self).pluck(:followed_id).map { |user|
+        found_users.push(User.find(user))
+      }
+    end
+
+      if Relationship.where("followed_id=?", self).present?
+        Relationship.where("followed_id=?", self).pluck(:follower_id).map { |user|
+        found_users.push(User.find(user))
+      }
+      end
+
+      found_users
+  end
+
 
 
 end

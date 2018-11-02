@@ -14,22 +14,35 @@ class Relationship < ApplicationRecord
   #are relationships created immediately based on peoples answers ..? because they will eventually show on each others searches?
 # || self.where("followed_id=?",current_user)
 
-def self.findUser(user_id)
-  found_users = []
-  current_user = User.find(user_id).id
-  if self.where("follower_id=?" || "following_id", current_user).present?
-    self.where("follower_id=?", current_user).pluck(:followed_id).map { |user|
-      found_users.push(User.find(user))
-    }
-    self.where("followed_id=?", current_user).pluck(:follower_id).map { |user|
-      found_users.push(User.find(user))
-    }
-    found_users #these are all of the matches
-  elsif found_users.empty?
-    puts "no users found"
+def self.findUser(user1, user2) #current_user adding user
+  current_user = User.find(user1.id)
+  if self.where("follower_id=?" || "following_id=?", current_user).present?
+
+    follower = self.where("follower_id=?", current_user).pluck(:followed_id).map { |user|
+      if user == user2
+        true
+      end
+      }
+
+        followed = self.where("followed_id=?", current_user).pluck(:follower_id).map { |user|
+          if user == user2
+            true
+          end
+        }
+
+      if follower == true && followed == true
+        puts "Relationship Exists"
+      else
+        Relationship.create(follower_id: user1.id, followed_id: user2.id)
+      end
+
   end
 end
-# 
+
+
+# on user click for matches ... run self.findUser(current_user)
+
+
 # def test
 #   Relationship.findUser(1)
 # end
