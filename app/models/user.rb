@@ -51,7 +51,7 @@ class User < ApplicationRecord
     } # array of ppl
     # for each user that like or dont like dogs .. create a
     #new relationship if it doesnt exist yet ..
-    matches.each{ |user| Relationship.create(follower_id: self.id, followed_id: user.id) } # is this being called for a each iteration of a user ???
+    matches.each{ |user| Relationship.findUser(self, user) } # each user is created with those pairs 
         # should create instances of relationships... if it doesnt already exist in either direction
         #for each user check if the relationship exists
         # in either column
