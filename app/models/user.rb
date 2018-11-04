@@ -15,7 +15,7 @@ class User < ApplicationRecord
   has_many :following, through: :active_relationships, source: :followed
   has_many :followers, through: :passive_relationships
 
-  def follow(other_user) #users I decide to follow,
+  def follow(other_user) #users I decide to follow
     following << other_user
   end
 
@@ -45,17 +45,17 @@ class User < ApplicationRecord
       found_users
   end
 
-  def find_matches ##creates matches
-    matches = User.all.select { |user| ##finds all people that like dogs
-        user != self && user.dogs == self.dogs ## and is not self
-    } # array of ppl
+  def find_matches # creates matches
+    matches = User.all.select { |user|       # finds all people that like dogs
+      user != self && user.dogs == self.dogs # and is not self
+    }
+    # array of ppl
     # for each user that like or dont like dogs .. create a
-    #new relationship if it doesnt exist yet ..
-    matches.each{ |user| Relationship.findUser(self, user) } # each user is created with those pairs 
+    # new relationship if it doesnt exist yet ..
+    matches.each{ |user| Relationship.findUser(self, user) } # each user is created with those pairs
         # should create instances of relationships... if it doesnt already exist in either direction
         #for each user check if the relationship exists
         # in either column
-
         #find out why relationships are not being created
   end
 
