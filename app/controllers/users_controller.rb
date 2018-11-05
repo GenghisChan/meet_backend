@@ -1,32 +1,21 @@
-class UsersController < ApplicationController
-
-  def index
-    @users = User.all
-
-    render json: @users
-  end
-
-  def show
-    @user = User.find(params[:id])
-
-    render json: @user
-  end
+class UsersController < ApiController
+  before_action :require_login, except: [:create]
 
   def create
-    @user = User.create(user_params)
-
-    if @user.valid?
-      @user
-    else
-      render json: @user.errors.full_messages
+    user = User.create!(user_params)
+    render json: { token: user.auth_token}
   end
-end
+
+  def profile
+    user = User.find_by_auth_token!(request.headers[:token])
+    render json: { user: { username: user.username, dogs: user.dogs } }
+  end
 
 
   private
 
   def user_params
-    params.require(:user).permit(:username, :dogs)
+    params.require(:user).permit(:username, :password, :dogs)
   end
 
 end

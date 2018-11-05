@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_secure_password
+  has_secure_token :auth_token
 
   validates :username, uniqueness: { case_sensitive: false }
 
@@ -15,7 +16,7 @@ class User < ApplicationRecord
   has_many :following, through: :active_relationships, source: :followed
   has_many :followers, through: :passive_relationships
 
-  def follow(other_user) #users I decide to follow,
+  def follow(other_user)
     following << other_user
   end
 
@@ -27,7 +28,18 @@ class User < ApplicationRecord
     following.include?(other_user)
   end
 
-  def paired ## shows all matches ...
+  def invalidate_token
+    self.update_columns(auth_token: nil)
+  end
+
+  def self.validate_login(username, password)
+    user = find_by(username: username)
+    if user && user.authenticate(password)
+      user
+    end
+  end
+
+  def paired
     found_users = []
 
     if Relationship.where(follower_id: self.id).present?
@@ -45,20 +57,11 @@ class User < ApplicationRecord
       found_users
   end
 
-  def find_matches ##creates matches
-    matches = User.all.select { |user| ##finds all people that like dogs
-        user != self && user.dogs == self.dogs ## and is not self
-    } # array of ppl
-    # for each user that like or dont like dogs .. create a
-    #new relationship if it doesnt exist yet ..
-    matches.each{ |user| Relationship.create(follower_id: self.id, followed_id: user.id) } # is this being called for a each iteration of a user ???
-        # should create instances of relationships... if it doesnt already exist in either direction
-        #for each user check if the relationship exists
-        # in either column
-
-        #find out why relationships are not being created
+  def find_matches
+    matches = User.all.select { |user|
+      user != self && user.dogs == self.dogs
+    }
+    matches.each{ |user| Relationship.findUser(self, user) }
   end
-
-
 
 end
