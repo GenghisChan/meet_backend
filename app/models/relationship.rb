@@ -17,7 +17,6 @@ def self.findUser(current_user, other_user)
   else
     matches = User.all.select { |user| user != current_user && user.dogs == current_user.dogs }
     matches.each{ |user| Relationship.create(follower_id: current_user.id, followed_id: user.id) }
-
         end
     end
 end
