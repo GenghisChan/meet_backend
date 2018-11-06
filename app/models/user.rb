@@ -1,7 +1,5 @@
 class User < ApplicationRecord
   has_secure_password
-  has_secure_token :auth_token
-
   validates :username, uniqueness: { case_sensitive: false }
 
   has_many :active_relationships,  class_name:  "Relationship",
