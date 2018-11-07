@@ -26,17 +26,6 @@ class User < ApplicationRecord
     following.include?(other_user)
   end
 
-  def invalidate_token
-    self.update_columns(auth_token: nil)
-  end
-
-  def self.validate_login(username, password)
-    user = find_by(username: username)
-    if user && user.authenticate(password)
-      user
-    end
-  end
-
   def paired
     found_users = []
 
@@ -59,7 +48,7 @@ class User < ApplicationRecord
     matches = User.all.select { |user|
       user != self && user.dogs == self.dogs
     }
-    matches.each{ |user| Relationship.findUser(self, user) }
+    matches.each{ |user| Relationship.find_user(self, user) }
   end
 
 end

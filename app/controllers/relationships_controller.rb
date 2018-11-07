@@ -1,4 +1,4 @@
-class RelationshipsController < Appl
+class RelationshipsController < ApplicationController
 
   def index
     @relationships = Relationship.all
@@ -7,14 +7,13 @@ class RelationshipsController < Appl
   end
 
   def show
-    @relationship = Relationship.find(params[:id])
-
-    render json: @relationship
+    # @relationship = Relationship.find(params[:id])
+    info = current_user
+    render json: info
   end
 
   def create
     @relationship = Relationship.create(relationship_params)
-
     if @relationship.valid?
       render json: {message: 'ok', relationship: @relationship}
     else

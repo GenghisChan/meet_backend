@@ -20,6 +20,12 @@ class UsersController < ApplicationController
       render json: { user: UserSerializer.new(current_user) }, status: :accepted
     end
 
+    def find_matches
+      matches = User.all.select { |user|
+        user != self && user.dogs == self.dogs
+      }
+      matches.each{ |user| Relationship.find_user(self, user) }
+    end
 
     private
 

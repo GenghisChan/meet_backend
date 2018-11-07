@@ -6,7 +6,7 @@ class AuthController < ApplicationController
 
    if user && user.authenticate(params[:password])
      token = issue_token({id: user.id})
-     render json: {jwt: token}
+     render json: {jwt: token, user: user}
    else
      render json: {error: 'User is invalid'}, status: 401
    end
@@ -17,7 +17,7 @@ class AuthController < ApplicationController
    user_info = JWT.decode(token, 'secret', true, algorithm: 'HS256')
    user = User.find_by(id: user_info[0]["id"])
    if user
-     render json: {username: user.username}
+     render json: {username: user}
    else
      render json: {error: 'Invalid token'}, status: 401
    end
