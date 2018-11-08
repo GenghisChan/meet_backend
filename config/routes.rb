@@ -12,5 +12,5 @@ Rails.application.routes.draw do
   get '/find_matches', to: 'users#found_match'
   get '/profile' => 'users#profile'
   get '/matches' => 'users#find_matches'
-
+  get '/show_matches' => 'users#show_matches'
 end

@@ -31,6 +31,12 @@ class UsersController < ApplicationController
       end
     end
 
+    def show_matches
+      matches = current_user.paired
+
+      render json: matches
+    end
+
 
     private
 
