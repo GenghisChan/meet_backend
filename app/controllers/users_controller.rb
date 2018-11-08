@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  skip_before_action :authorized, only: %i[:create]
+  skip_before_action :authorized, only: [:create]
 
   def index
     @users = User.all
@@ -8,24 +8,29 @@ class UsersController < ApplicationController
   end
 
   def create
+    byebug
       @user = User.create(user_params)
       if @user.valid?
-        render json: { user: UserSerializer.new(@user) }, status: :created
+        render json: @user, status: :created
       else
-        render json: { error: 'failed to create user' }, status: :not_acceptable
+        render json: @user.errors.full_messages, status: :not_acceptable
       end
     end
 
     def profile
-      render json: { user: UserSerializer.new(current_user) }, status: :accepted
+      render json: current_user, status: :accepted
     end
 
-    def find_matches
-      matches = User.all.select { |user|
-        user != self && user.dogs == self.dogs
-      }
-      matches.each{ |user| Relationship.find_user(self, user) }
+    def found_match
+      @relationship = current_user.find_matches
+
+      if @relationship
+        render json: @relationship, status: :created
+      else
+        render json: {error: 'Relationship already exists'}, status: :not_acceptable
+      end
     end
+
 
     private
 
@@ -33,4 +38,20 @@ class UsersController < ApplicationController
       params.require(:user).permit(:username, :password)
     end
 
-end
+  end
+
+
+
+
+
+
+# def find_relationships
+#   if Relationship.where(followed_id: current_user.id).present? || self.where(follower_id: current_user.id).present?
+#
+#
+#
+#   else
+#     matches = User.all.select { |user| user != current_user && user.dogs == current_user.dogs }
+#     matches.each{ |user| Relationship.create(follower_id: current_user.id, followed_id: user.id) }
+#   end
+# end

@@ -1,5 +1,5 @@
 class UserSerializer < ActiveModel::Serializer
-  attributes :username, :password_digest, :dogs
+  attributes :id, :username
   has_many :active_relationships
   has_many :passive_relationships
 end

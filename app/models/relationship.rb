@@ -3,7 +3,7 @@ class Relationship < ApplicationRecord
   belongs_to :followed, class_name: "User"
   validates :follower_id, presence: true
   validates :followed_id, presence: true
-  validate :find_user, on: :create
+
 
 
 def self.find_user(current_user, other_user)

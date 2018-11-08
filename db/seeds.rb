@@ -8,10 +8,6 @@
 # 10.times do
 #   User.create(username: Faker::Name.name, email: Faker::Internet.email)
 # end
-5.times do
+20.times do
   User.create(username: Faker::Name.name, password: "test", dogs: true)
-end
-
-5.times do
-  User.create(username: Faker::Name.name, password: "test", dogs: false)
 end

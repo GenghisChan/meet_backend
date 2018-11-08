@@ -8,7 +8,9 @@ Rails.application.routes.draw do
   get '/current_user', to: 'auth#show'
   # post "/login" => "sessions#create"
   # delete "/logout" => "sessions#destroy"
-  get '/find_matches', to: 'users#find_matches'
+  post '/sign_up', to: 'users#create'
+  get '/find_matches', to: 'users#found_match'
   get '/profile' => 'users#profile'
+  get '/matches' => 'users#find_matches'
 
 end
