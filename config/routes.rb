@@ -4,13 +4,20 @@ Rails.application.routes.draw do
 
   resources :relationships
   resources :users
+  resources :conversations, only: [:index, :create]
+  resources :messages, only: [:create]
+  mount ActionCable.server => '/cable'
+  
+  #auth routes
   post '/login', to: 'auth#create'
   get '/current_user', to: 'auth#show'
-  # post "/login" => "sessions#create"
-  # delete "/logout" => "sessions#destroy"
+
+  #user routes
   post '/sign_up', to: 'users#create'
   get '/find_matches', to: 'users#found_match'
   get '/profile' => 'users#profile'
   get '/matches' => 'users#find_matches'
   get '/show_matches' => 'users#show_matches'
+
+
 end

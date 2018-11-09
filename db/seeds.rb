@@ -9,5 +9,5 @@
 #   User.create(username: Faker::Name.name, email: Faker::Internet.email)
 # end
 20.times do
-  User.create(username: Faker::Name.name, password: "test", dogs: true)
+  User.create(username: Faker::Name.name, password: "test", dogs: false)
 end
