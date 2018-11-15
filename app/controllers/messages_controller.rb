@@ -1,5 +1,5 @@
 class MessagesController < ApplicationController
-
+  before_action :authorized
   def create
     message = Message.new(message_params)
     conversation = Conversation.find(message_params[:conversation_id])
@@ -15,6 +15,7 @@ class MessagesController < ApplicationController
   private
 
   def message_params
-    params.require(:message).permit(:text, :conversation_id)
+    params.require(:message).permit(:text, :conversation_id, :user_id)
   end
+
 end

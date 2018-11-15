@@ -1,4 +1,6 @@
 class RelationshipsController < ApplicationController
+  before_action :authorized
+  after_action :change_status, only: [:update]
 
   #create validations
   #once i select a user to match with based on if they're status is pending
@@ -23,6 +25,41 @@ class RelationshipsController < ApplicationController
     end
   end
 
+
+  def update
+    # we'll recieve 2 ids and we need to find relationship by these ids
+    relationship = find_relationship(params[:relationship][:current_user_id], params[:relationship][:match_id])[0]
+    if relationship.follower_id == params[:relationship][:current_user_id]
+      relationship.update(follower_answer: params[:relationship][:response])
+    else
+      relationship.update(followed_answer: params[:relationship][:response])
+    end
+    render json: relationship
+  end
+
+  def find_relationship(current_user, match_user)
+    if Relationship.where(followed_id: match_user, follower_id: current_user).length > 0
+      return Relationship.where(followed_id: match_user, follower_id: current_user)
+    elsif Relationship.where(follower_id: match_user, followed_id: current_user).length > 0
+      return Relationship.where(follower_id: match_user, followed_id: current_user)
+    else
+      return nil
+    end
+  end
+
+
+  def change_status
+    relationship = find_relationship(params[:relationship][:current_user_id], params[:relationship][:match_id])[0]
+    byebug
+
+    if relationship.follower_answer === true && relationship.followed_answer === true
+      relationship.update(status: 'friends')
+    elsif relationship.follower_answer === false || relationship.followed_answer === false && relationship.follower_answer != nil || relationship.followed_answer != nil
+      relationship.update(status: 'rejected')
+    else
+      return nil
+    end
+  end
   # def exists
   #   if Relationship.where(followed_id: current_user.id).present? || Relationship.where(follower_id: current_user.id).present?
   #
@@ -38,7 +75,9 @@ class RelationshipsController < ApplicationController
   #     end
 
   private
+
+
     def relationship_params
-      params.require(:relationship).permit(:follower_id, :followed_id)
+      params.require(:relationship).permit(:current_user_id, :match_id, :follower_answer, :followed_answer, :response, :status)
     end
 end

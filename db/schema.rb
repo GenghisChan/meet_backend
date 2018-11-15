@@ -24,14 +24,18 @@ ActiveRecord::Schema.define(version: 2018_11_09_034613) do
   create_table "messages", force: :cascade do |t|
     t.string "text"
     t.bigint "conversation_id"
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "relationships", force: :cascade do |t|
     t.integer "follower_id"
     t.integer "followed_id"
+    t.boolean "follower_answer"
+    t.boolean "followed_answer", default: true
     t.string "status", default: "pending"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -43,10 +47,17 @@ ActiveRecord::Schema.define(version: 2018_11_09_034613) do
   create_table "users", force: :cascade do |t|
     t.string "username"
     t.string "password_digest"
-    t.boolean "dogs"
+    t.integer "age"
+    t.string "sex"
+    t.string "location"
+    t.text "bio"
+    t.string "img_url"
+    t.boolean "dogs", default: false
+    t.boolean "online", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   add_foreign_key "messages", "conversations"
+  add_foreign_key "messages", "users"
 end

@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  skip_before_action :authorized, only: [:create]
+  skip_before_action :authorized, only: [:create, :show]
 
   def index
     @users = User.all
@@ -16,22 +16,35 @@ class UsersController < ApplicationController
       end
     end
 
+  def show
+    @user = User.find(params[:id])
+
+    render json: @user
+  end
+
     def profile
       render json: current_user, status: :accepted
     end
 
     def found_match
-      @relationship = current_user.find_matches
+      @relationship = current_user.display_matches
 
       if @relationship
         render json: @relationship, status: :created
       else
-        render json: {error: 'Relationship already exists'}, status: :not_acceptable
+        render json: {error: 'no user found'}
       end
     end
 
+    def update
+      @user = User.find(params[:id])
+
+      @user.update(user_params)
+      render json: @user
+    end
+
     def show_matches
-      matches = current_user.paired
+      matches = current_user.show_people
 
       render json: matches
     end
@@ -39,8 +52,9 @@ class UsersController < ApplicationController
 
     private
 
+
     def user_params
-      params.require(:user).permit(:username, :password)
+      params.require(:user).permit(:username, :password, :age, :sex, :location, :bio, :img_url, :online, :status)
     end
 
   end
