@@ -16,9 +16,13 @@ ActiveRecord::Schema.define(version: 2018_11_09_034613) do
   enable_extension "plpgsql"
 
   create_table "conversations", force: :cascade do |t|
-    t.string "title"
+    t.integer "author_id"
+    t.integer "receiver_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["author_id", "receiver_id"], name: "index_conversations_on_author_id_and_receiver_id", unique: true
+    t.index ["author_id"], name: "index_conversations_on_author_id"
+    t.index ["receiver_id"], name: "index_conversations_on_receiver_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -52,7 +56,7 @@ ActiveRecord::Schema.define(version: 2018_11_09_034613) do
     t.string "location"
     t.text "bio"
     t.string "img_url"
-    t.boolean "dogs", default: false
+    t.boolean "dogs", default: true
     t.boolean "online", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

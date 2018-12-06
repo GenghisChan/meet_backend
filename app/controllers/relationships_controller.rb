@@ -50,12 +50,14 @@ class RelationshipsController < ApplicationController
 
   def change_status
     relationship = find_relationship(params[:relationship][:current_user_id], params[:relationship][:match_id])[0]
-    byebug
+    
 
     if relationship.follower_answer === true && relationship.followed_answer === true
       relationship.update(status: 'friends')
+
     elsif relationship.follower_answer === false || relationship.followed_answer === false && relationship.follower_answer != nil || relationship.followed_answer != nil
       relationship.update(status: 'rejected')
+
     else
       return nil
     end

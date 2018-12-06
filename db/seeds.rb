@@ -9,5 +9,5 @@
 #   User.create(username: Faker::Name.name, email: Faker::Internet.email)
 # end
 20.times do
-  User.create(username: Faker::Name.name, password: "test", dogs: false, age: rand(18..50) , sex: Faker::Gender.binary_type, location: "NYC", bio:Faker::Lorem.paragraph , img_url:Faker::Avatar.image("my-own-slug", "50x50", "jpg"))
+  User.create(username: Faker::Name.name, password: "123456", dogs: true, age: rand(18..50) , sex: Faker::Gender.binary_type, location: "NYC", bio:Faker::Lorem.paragraph , img_url:'https://www.thehumanenterprise.com.au/wp-content/uploads/2017/06/Empty-Profile-Testimonials.jpg')
 end

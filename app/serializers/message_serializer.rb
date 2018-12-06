@@ -1,5 +1,7 @@
 class MessageSerializer < ActiveModel::Serializer
-  attributes :id, :user, :conversation_id, :text, :created_at
+  attributes :id, :conversation_id, :text, :created_at, :author_name, :user_id
 
-  belongs_to :user
+  def author_name
+    User.find(object.user_id).name
+  end
 end

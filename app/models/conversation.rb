@@ -1,12 +1,13 @@
 class Conversation < ApplicationRecord
-  # has_many :followers, class_name: "User"
-  # has_many :followeds, class_name: "User"
-  # validates :follower_id, presence: true
-  # validates :followed_id, presence: true
+  belongs_to :author, class_name: "User"
+  belongs_to :receiver, class_name: "User"
+  validates :author_id, presence: true
+  validates :receiver_id, presence: true
+  validates :author, uniqueness: {scope: :receiver}
 
-  # has_many :following, through: :messages, source: :followed
-  # has_many :followers, through: :messages
+  scope :participating, -> (user) do
+    where("(conversations.author_id = ? OR conversations.receiver_id = ?)", user.id, user.id)
+  end
 
   has_many :messages
-
 end

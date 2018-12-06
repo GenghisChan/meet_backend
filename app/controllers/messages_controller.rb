@@ -1,15 +1,23 @@
 class MessagesController < ApplicationController
-  before_action :authorized
+
+  def index
+    @messages = Message.all
+    render json: @messages
+  end
+
   def create
+
     message = Message.new(message_params)
-    conversation = Conversation.find(message_params[:conversation_id])
-      if message.save
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          MessageSerializer.new(message)
-        ).serializable_hash
+    conversation = Conversation.find(params[:conversation_id])
+    if message.save
+      serialized_data = ActiveModelSerializers::Adapter::Json.new(
+        MessageSerializer.new(message)
+      ).serializable_hash
+      # binding.pry
         MessagesChannel.broadcast_to conversation, serialized_data
         head :ok
-    end
+      end
+
   end
 
   private

@@ -10,9 +10,10 @@ class UsersController < ApplicationController
   def create
       @user = User.create(user_params)
       if @user.valid?
-        render json: @user, status: :created
+          token = issue_token({id: @user.id})
+          render json: {jwt: token, user: @user}, status: :accepted
       else
-        render json: @user.errors.full_messages, status: :not_acceptable
+        render json: { error: @user.errors.full_messages }, status: :unprocessible_entity
       end
     end
 
@@ -28,6 +29,7 @@ class UsersController < ApplicationController
 
     def found_match
       @relationship = current_user.display_matches
+      # byebug
 
       if @relationship
         render json: @relationship, status: :created
@@ -49,12 +51,28 @@ class UsersController < ApplicationController
       render json: matches
     end
 
+def followers
+  @user = User.find_by(name:params[:currentU])
+  @other = User.find_by(name:params[:otherU])
+  @conversation = Conversation.new(author_id:@user.id,receiver_id:@other.id)
+
+  if @conversation.save
+    serialized_data = ActiveModelSerializers::Adapter::Json.new(
+      ConversationSerializer.new(@conversation)
+    ).serializable_hash
+    ActionCable.server.broadcast 'conversations_channel', serialized_data
+    head :ok
+  end
+
+  render json: @conversation
+end
+
 
     private
 
 
     def user_params
-      params.require(:user).permit(:username, :password, :age, :sex, :location, :bio, :img_url, :online, :status)
+      params.require(:user).permit(:username, :password, :dogs, :age, :sex, :location, :bio, :img_url, :online, :status)
     end
 
   end
