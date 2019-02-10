@@ -112,26 +112,3 @@ has_many :messages
   end
 
 end
-
-# else
-#   Relationship.create(follower_id: self.id, followed_id: random_user.id)
-# end
-
-# def find_matches
-#   matches = User.all.select { |user|
-#     user != self && user.dogs == self.dogs
-#   }
-#   matches.each{ |user| Relationship.find_user(self, user) }
-# end
-
-#need to find relationship.. return it..
-
-# def find_relationship(random_user)
-#   if Relationship.where(followed_id: random_user.id, follower_id: self.id).length > 0
-#     Relationship.where(followed_id: random_user.id, follower_id: self.id)
-#   elsif Relationship.where(follower_id: random_user.id, followed_id: self.id).length > 0
-#     Relationship.where(followed_id: random_user.id, follower_id: self.id)
-#   else
-#     Relationship.create(follower_id: self.id, followed_id: random_user.id)
-#   end
-# end
